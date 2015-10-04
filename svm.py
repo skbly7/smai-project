@@ -36,7 +36,7 @@ def classify(model, featureVectors):
 		total += 1
 	data = featureVectors[:,-1].flatten()
 	data = data.astype(np.int).tolist()
-	print cr(z, data)
+	print cr(data, z)
 	print "Accuracy:",
 	print (true * 100) / total
 
