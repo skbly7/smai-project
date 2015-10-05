@@ -18,7 +18,7 @@ def encodeAll(mat):
 	return mat.astype(np.float)
 
 def train(X, y):
-	clf = svm.SVC(kernel='linear', C = 1.0, max_iter = 1000000)
+	clf = svm.SVC(kernel='linear', C = 1.0, max_iter = 100000)
 	clf.fit(X, y)
 	print "Train Done!"
 	return clf
@@ -37,7 +37,7 @@ def classify(model, featureVectors):
 		total += 1
 	data = featureVectors[:,-1].flatten()
 	data = data.astype(np.int).tolist()
-	print cr(data, z)
+	print cr(data, z, digits = 4)
 	print "Accuracy:",
 	print (true * 100) / total
 
@@ -61,7 +61,7 @@ for line in file:
 	featureVectors.append(vector)
 random.shuffle(featureVectors)
 N = 10000
-k = 21
+k = 11
 mat = np.array(featureVectors)[:N,:]
 mat = encodeAll(mat)
 newData = reduceDim(mat, k)
@@ -69,4 +69,3 @@ trainData = newData[:N/2, :]
 testData = newData[N/2:, :]
 model = train(trainData[:, :-1], trainData[:, -1])
 classify(model, testData)
-
