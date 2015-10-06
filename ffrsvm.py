@@ -20,7 +20,7 @@ def encodeAll(mat):
 	return mat.astype(np.float)
 
 def train(X, y):
-	clf = svm.SVC(kernel='linear', C = 1.0, max_iter = 1000000)
+	clf = svm.SVC(kernel='linear', C = 1.0, max_iter = 100000)
 	clf.fit(X, y)
 	print "Train Done!"
 	return clf
@@ -54,15 +54,26 @@ def reduceDim(mat, k):
 
 def reduceDimFFR(mat, k):
 	total_category = int(mat.max(axis=0)[-1])+1
+	#overall_data = np.zeros(2,2))
+	dict_feature = {}
 	for i in range(total_category):
 		group_by_func = mat[:, -1] == i
 		cat_i_data = mat[group_by_func]
 		sum_i = np.sum(cat_i_data, axis=0)
 		s_d_with_class = np.divide(sum_i, len(cat_i_data))
-		s_d = s_d_with_class[:-1]
-		print s_d
-		v_d = np.var(s_d)
-		print v_d
+		s_id = s_d_with_class[:-1]
+		for d in range(len(s_id)):
+			if d not in dict_feature:
+				dict_feature[d] = []
+	#		print s_id[d]
+			dict_feature[d].append(s_id[d])
+	variance = []
+	for i in dict_feature:
+		variance.append(np.var(np.array(dict_feature[i])))
+	best_feature_index = np.array(variance).argsort()[:k].tolist()
+	# adding back class labels to selected columns
+	best_feature_index.append(-1)
+	mat = mat[:,best_feature_index]
 	return mat
 
 file = open("kdd.data")
@@ -83,6 +94,7 @@ mat = reduceDimFFR(mat, k)
 newData = mat
 trainData = newData[:N/2, :]
 testData = newData[N/2:, :]
-#model = train(trainData[:, :-1], trainData[:, -1])
-#classify(model, testData)
+#print mat[0]
+model = train(trainData[:, :-1], trainData[:, -1])
+classify(model, testData)
 
