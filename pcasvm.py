@@ -5,6 +5,7 @@ import random
 from sklearn import svm, preprocessing
 from sklearn.decomposition import PCA
 from sklearn.metrics import classification_report as cr
+from myPCA import reduceDimensionPCA
 
 def encode(vector):
 	le = preprocessing.LabelEncoder()
@@ -59,14 +60,14 @@ for line in file:
 	else:
 		vector[-1] = 1
 	featureVectors.append(vector)
-N = 50000
+N = 500
 random.seed(N + 1)
 random.shuffle(featureVectors)
 k = 11
 mat = np.array(featureVectors)[:N,:]
 mat = encodeAll(mat)
 t0 = time.clock()
-newData = reduceDim(mat, k)
+newData = reduceDimensionPCA(mat, k)
 t1 = time.clock()
 trainData = mat[:N/2, :]
 testData = mat[N/2:, :]
