@@ -1,3 +1,4 @@
+import time
 import numpy as np
 import matplotlib.pyplot as plt
 import random
@@ -18,9 +19,8 @@ def encodeAll(mat):
 	return mat.astype(np.float)
 
 def train(X, y):
-	clf = svm.SVC(kernel='linear', C = 1.0, max_iter = 100000)
+	clf = svm.SVC(kernel='linear', C = 1.0, max_iter = -1)
 	clf.fit(X, y)
-	print "Train Done!"
 	return clf
 
 def predict(model, vector):
@@ -37,7 +37,7 @@ def classify(model, featureVectors):
 		total += 1
 	data = featureVectors[:,-1].flatten()
 	data = data.astype(np.int).tolist()
-	print cr(data, z, digits = 4)
+	print cr(data, z)
 	print "Accuracy:",
 	print (true * 100) / total
 
@@ -59,13 +59,24 @@ for line in file:
 	else:
 		vector[-1] = 1
 	featureVectors.append(vector)
+N = 50000
+random.seed(N + 1)
 random.shuffle(featureVectors)
-N = 10000
 k = 11
 mat = np.array(featureVectors)[:N,:]
 mat = encodeAll(mat)
+t0 = time.clock()
 newData = reduceDim(mat, k)
-trainData = newData[:N/2, :]
-testData = newData[N/2:, :]
+t1 = time.clock()
+trainData = mat[:N/2, :]
+testData = mat[N/2:, :]
 model = train(trainData[:, :-1], trainData[:, -1])
+t2 = time.clock()
 classify(model, testData)
+t3 = time.clock()
+
+print t1-t0, " time in PCA reduction"
+print t2-t1, " time in training"
+print t3-t2, " time in classification"
+print t3-t0, " total time"
+print "------------------------------------------\n"
